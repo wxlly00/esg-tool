@@ -68,20 +68,72 @@ SUB_CRITERIA_LABELS = {
 
 
 class ESGScorer:
-    """ESG scoring and portfolio analytics engine."""
+    """
+    ESG scoring and portfolio analytics engine.
+
+    ## Scoring Methodology
+
+    Each company is rated across 3 pillars and 12 sub-criteria on a 0–100 scale:
+
+    ### Pillar Weights (configurable)
+    - **Environmental (E)**: 40% (default)
+    - **Social (S)**: 30% (default)
+    - **Governance (G)**: 30% (default)
+
+    ### Sub-criteria (4 per pillar, equal weight within pillar)
+    | Pillar | Sub-criterion      | What it measures                        |
+    |--------|--------------------|-----------------------------------------|
+    | E      | Carbon Intensity   | GHG emissions relative to revenue       |
+    | E      | Renewable Energy % | Share of energy from renewable sources  |
+    | E      | Water Management   | Water use efficiency & reduction plans  |
+    | E      | Waste Reduction    | Waste diversion rate & circular economy |
+    | S      | Employee Satisf.   | Staff surveys, retention, safety        |
+    | S      | Diversity & Inc.   | Gender/ethnic diversity in workforce    |
+    | S      | Community Invest.  | Local investment & social programs      |
+    | S      | Supply Chain Ethics| Supplier audits & labour standards      |
+    | G      | Board Independence | % independent board directors           |
+    | G      | Exec. Pay Trans.   | Pay ratio disclosure & clawbacks        |
+    | G      | Reporting Trans.   | GRI/SASB/TCFD alignment                 |
+    | G      | Anti-Corruption    | Policies, training, whistleblower lines |
+
+    ### Final ESG Score
+    ESG = E_Score × w_E + S_Score × w_S + G_Score × w_G
+
+    where each pillar score is the arithmetic mean of its 4 sub-criteria scores.
+
+    ### Classification
+    - **Leader**  : ESG ≥ 75
+    - **Average** : 50 ≤ ESG < 75
+    - **Laggard** : ESG < 50
+    """
 
     def __init__(self, weights: dict = None):
+        """
+        Initialize ESGScorer.
+
+        Args:
+            weights: Optional dict with keys 'E', 'S', 'G' (must sum to 1.0).
+                     Defaults to {'E': 0.40, 'S': 0.30, 'G': 0.30}.
+        """
         self.weights = weights or DEFAULT_WEIGHTS
         self.data = pd.DataFrame(ESG_UNIVERSE, columns=COLUMNS)
         self._validate_weights()
 
     def _validate_weights(self):
+        """Ensure pillar weights sum to 1.0 (±1%)."""
         total = sum(self.weights.values())
         if abs(total - 1.0) > 0.01:
             raise ValueError(f"Weights must sum to 1.0, got {total:.2f}")
 
     def update_weights(self, E: float, S: float, G: float):
-        """Update pillar weights (should sum to 1.0)."""
+        """
+        Update pillar weights dynamically (auto-normalized to sum to 1.0).
+
+        Args:
+            E: Environmental weight
+            S: Social weight
+            G: Governance weight
+        """
         total = E + S + G
         self.weights = {"E": E/total, "S": S/total, "G": G/total}
 

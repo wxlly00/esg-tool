@@ -1,49 +1,90 @@
-# ESG Scoring Tool
+# ESG Scoring & Screening Tool
 
-> Multi-criteria ESG screening framework for equity investment analysis
+> Multi-pillar ESG framework with configurable weights and portfolio analytics.
 
-[![Python](https://img.shields.io/badge/Python-3.11-blue)](https://python.org)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.28-red)](https://streamlit.io)
+## Description
 
-## Overview
-
-A comprehensive ESG scoring and screening tool covering a 20-company European equity universe. Supports custom E/S/G weight allocation, sector exclusions, portfolio construction, and sub-criteria deep-dives.
-
-## Methodology
-
-| Pillar | Weight | Sub-Criteria |
-|--------|--------|--------------|
-| Environmental | 40% | Carbon Intensity, Renewable Energy %, Water Management, Waste Reduction |
-| Social | 30% | Employee Satisfaction, Diversity & Inclusion, Community Investment, Supply Chain Ethics |
-| Governance | 30% | Board Independence, Executive Pay Transparency, Reporting, Anti-Corruption |
-
-**Classification:** ESG Leader (>75) | Average (50–75) | Laggard (<50)
-
-## Universe
-
-20 European companies across sectors: Industrial, Consumer, Finance, Energy, Healthcare, Automotive, Food & Beverage.
-
-Includes: Schneider Electric, Unilever, Danone, TotalEnergies, Volkswagen, BNP Paribas, Nestlé, Shell, LVMH, Sanofi...
-
-## Features
-
-- **Universe Screener** — sortable, color-coded ESG ranking table
-- **Heatmap** — sub-criteria performance across all companies
-- **Company Profile** — radar/spider chart for individual ESG breakdown
-- **Portfolio Builder** — weighted ESG profile vs universe benchmark
+An ESG analysis engine that scores 20 European companies across **Environmental, Social, and Governance** pillars using 12 sub-criteria. Supports custom pillar weights, sector screening, exclusion filters, and portfolio ESG profiling. Fully interactive via Streamlit.
 
 ## Tech Stack
 
-`Python 3.11` `Streamlit` `Plotly` `pandas` `numpy`
+| Layer | Library |
+|-------|---------|
+| Numerics | `numpy`, `pandas` |
+| Visualisation | `plotly`, `streamlit` |
 
-## How to Run
+## Installation
 
 ```bash
+git clone https://github.com/Wxlly00/esg-tool.git
+cd esg-tool
 pip install -r requirements.txt
+```
+
+## Usage
+
+### CLI
+```bash
+python esg_screener.py
+```
+
+### Streamlit App
+```bash
 streamlit run app.py
 ```
 
+## Scoring Methodology
+
+### Pillar Weights (default, configurable)
+| Pillar | Default Weight | Rationale |
+|--------|---------------|-----------|
+| Environmental (E) | 40% | Climate risk is the primary ESG concern for most institutional mandates |
+| Social (S) | 30% | Labour, diversity, and community impact |
+| Governance (G) | 30% | Board quality, pay transparency, anti-corruption |
+
+### Sub-criteria (4 per pillar, equal weight within pillar)
+| Pillar | Sub-criterion | What it measures |
+|--------|--------------|-----------------|
+| E | Carbon Intensity | GHG emissions relative to revenue |
+| E | Renewable Energy % | Share of energy from renewable sources |
+| E | Water Management | Water use efficiency & reduction plans |
+| E | Waste Reduction | Waste diversion rate & circular economy |
+| S | Employee Satisfaction | Staff surveys, retention, safety KPIs |
+| S | Diversity & Inclusion | Gender/ethnic diversity at all levels |
+| S | Community Investment | Local investment & social programs |
+| S | Supply Chain Ethics | Supplier audits & labour standards |
+| G | Board Independence | % independent directors |
+| G | Exec Pay Transparency | Pay ratio disclosure & clawbacks |
+| G | Reporting Transparency | GRI/SASB/TCFD alignment |
+| G | Anti-Corruption | Policies, training, whistleblower lines |
+
+### Final Score Formula
+```
+ESG = E_Score × w_E + S_Score × w_S + G_Score × w_G
+
+where:
+  E_Score = mean(E_Carbon, E_Renewable, E_Water, E_Waste)
+  S_Score = mean(S_Employee, S_Diversity, S_Community, S_Supply)
+  G_Score = mean(G_Board, G_Pay, G_Transparency, G_Corruption)
+```
+
+### Classification
+| Label    | ESG Score |
+|----------|-----------|
+| Leader   | ≥ 75      |
+| Average  | 50 – 74   |
+| Laggard  | < 50      |
+
+## Features
+
+- **12 sub-criteria** across E, S, G pillars (0–100 scale each)
+- **Configurable pillar weights** — e.g. tilt toward governance for financial sector
+- **Sector screener** — filter by minimum ESG score or exclude sectors
+- **Portfolio ESG profile** — weighted average scores for custom portfolios
+- **Heatmap** — sub-criteria scores across all companies
+- 20 real European companies pre-loaded (Schneider Electric, Unilever, Volkswagen…)
+
 ## Author
 
-**Wilfried LAWSON HELLU** | Finance Analyst  
-📧 wilfriedlawpro@gmail.com | 🔗 [LinkedIn](https://linkedin.com/in/wilfried-lawsonhellu) | 🐙 [GitHub](https://github.com/Wxlly00)
+**Wilfried LAWSON HELLU** — Finance Analyst  
+[github.com/Wxlly00](https://github.com/Wxlly00)
